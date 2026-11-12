@@ -1,0 +1,40 @@
+name: Validate HA runtime
+on:
+  push:
+    paths:
+      - timepro/**
+      - .github/workflows/validate.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  amd64:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build the exact public installer
+        run: docker build --build-arg BUILD_ARCH=amd64 -t timepro-ha:test timepro
+      - name: Start and check the native amd64 runtime
+        run: |
+          docker volume create timepro-test-data
+          docker run --rm --entrypoint python3 -v timepro-test-data:/data timepro-ha:test -c 'from pathlib import Path; Path("/data/options.json").write_text("{}")'
+          docker run -d --name timepro-test --memory 1g -v timepro-test-data:/data timepro-ha:test
+          for attempt in $(seq 1 20); do
+            if docker exec timepro-test python3 -c 'import urllib.request; assert urllib.request.urlopen("http://127.0.0.1:8215/health",timeout=3).status==200'; then break; fi
+            sleep 2
+          done
+          docker exec timepro-test python3 -c 'import urllib.request; assert urllib.request.urlopen("http://127.0.0.1:8215/health",timeout=3).status==200'
+          docker exec timepro-test /usr/local/bin/llama-server --version
+          docker exec timepro-test python3 -c 'import urllib.request,json; r=urllib.request.Request("http://127.0.0.1:8215/setup/status",headers={"X-TimePRO-Setup":"1"}); d=json.load(urllib.request.urlopen(r)); assert d["phone_access"]=="disabled" and d["model"]["state"]=="disabled"'
+          docker restart timepro-test
+          for attempt in $(seq 1 20); do
+            if docker exec timepro-test python3 -c 'import urllib.request; assert urllib.request.urlopen("http://127.0.0.1:8215/health",timeout=3).status==200'; then break; fi
+            sleep 2
+          done
+          docker exec timepro-test python3 -c 'import urllib.request; assert urllib.request.urlopen("http://127.0.0.1:8215/health",timeout=3).status==200'
+      - name: Runtime log
+        if: always()
+        run: docker logs timepro-test || true
