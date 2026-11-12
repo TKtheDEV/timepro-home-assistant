@@ -28,6 +28,7 @@ jobs:
           done
           docker exec timepro-test python3 -c 'import urllib.request; assert urllib.request.urlopen("http://127.0.0.1:8215/health",timeout=3).status==200'
           docker exec timepro-test /usr/local/bin/llama-server --version
+          docker exec timepro-test /usr/local/bin/llama-server-baseline --version
           docker exec timepro-test python3 -c 'import urllib.request,json; r=urllib.request.Request("http://127.0.0.1:8215/setup/status",headers={"X-TimePRO-Setup":"1"}); d=json.load(urllib.request.urlopen(r)); assert d["phone_access"]=="disabled" and d["model"]["state"]=="disabled"'
           docker restart timepro-test
           for attempt in $(seq 1 20); do

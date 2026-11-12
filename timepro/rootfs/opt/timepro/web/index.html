@@ -19,13 +19,14 @@
     <p>The model understands requests. TimePRO checks the details before changing your plan.</p>
     <form id="provider-form">
       <label>Provider<select id="provider"><option value="builtin">Built-in local model</option><option value="ollama">Another local Ollama server</option><option value="open_ai_compatible">OpenAI-compatible provider</option><option value="manual">Basic parser · limited understanding</option></select></label>
-      <p id="builtin-note" class="hint">Enable <code>built_in_model</code> in the add-on Configuration tab, then restart. The first download is 1.12 GB. Allow at least 2.5 GB of free RAM in addition to Home Assistant.</p>
+      <p id="builtin-note" class="hint">Enable <code>built_in_model</code> in the add-on Configuration tab, then restart. The first download is about 1.1 GB. Allow at least 2.5 GB of free RAM in addition to Home Assistant.</p>
       <div id="provider-details"><label>Server URL<input id="endpoint" type="url" placeholder="http://192.168.50.20:11434" autocomplete="off"></label>
         <label>Model<input id="model" placeholder="qwen2.5:1.5b" autocomplete="off"></label>
         <label>API key <span class="hint">optional · leave blank to keep the saved key</span><input id="api-key" type="password" autocomplete="new-password"></label>
         <label class="check"><input id="local-http" type="checkbox"> Allow HTTP to a private LAN model</label>
       </div>
       <button type="submit">Save provider</button>
+      <button id="test-provider" type="button" class="secondary">Test provider</button>
     </form>
   </section>
 

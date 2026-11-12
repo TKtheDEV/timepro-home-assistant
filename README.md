@@ -20,7 +20,7 @@ Install **TimePRO**, set your timezone, start and open Web UI.
 * Dedicated HTTPS phone API; no privileged mode, HA token or Companion dependency.
 * amd64 and aarch64 runtime bundles verified by SHA-256 during installation.
 
-The local model's first download is 1.12 GB and needs at least 2.5 GB **available**
+The local model's first download is about 1.1 GB and needs at least 2.5 GB **available**
 RAM beyond HA's own needs. It is disabled by default. No automatic cloud fallback.
 An existing HA host with 16 GB is suitable for trying this small model, subject
 to what else is running. Manual calendar sync only in this preview.

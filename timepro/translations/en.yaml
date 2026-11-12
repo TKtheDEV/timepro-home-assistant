@@ -1,0 +1,35 @@
+configuration:
+  initial_timezone:
+    name: Profile time zone (first start)
+    description: >-
+      Use your own IANA time zone, such as America/New_York. It seeds a new
+      profile; an existing profile keeps its saved time zone across updates.
+  built_in_model:
+    name: Run a local model on this HA host
+    description: >-
+      Downloads about 1.1 GB of verified Qwen weights. Allow at least 2.5 GB of
+      free RAM beyond Home Assistant. A compatible CPU runner is selected automatically.
+  model_threads:
+    name: Model CPU threads
+    description: >-
+      Use two on small hosts or four for a four-CPU VM. Model work runs at lower
+      priority than Home Assistant's control processes.
+  phone_access:
+    name: Phone connection
+    description: >-
+      Keep disabled during setup. Select tls for certificates in /ssl, or
+      reverse_proxy when your existing HTTPS proxy or tunnel handles TLS.
+  public_url:
+    name: Phone server address
+    description: >-
+      The dedicated HTTPS address your phone will reach, including a port when
+      needed. Leave blank while phone access is disabled. Do not use an HA ingress URL.
+  certfile:
+    name: TLS certificate filename
+    description: Used only in tls mode. A filename inside /ssl, such as fullchain.pem.
+  keyfile:
+    name: TLS private-key filename
+    description: Used only in tls mode. A filename inside /ssl, such as privkey.pem.
+network:
+  8443/tcp: Optional HTTPS phone API, enabled only in tls mode.
+  8216/tcp: Optional private upstream for an existing HTTPS proxy.

@@ -22,6 +22,11 @@ function providerVisibility() {
   $('builtin-note').hidden = $('provider').value !== 'builtin';
 }
 $('provider').addEventListener('change', providerVisibility);
+$('test-provider').addEventListener('click', async () => {
+  $('test-provider').disabled = true; message('Testing the saved provider…');
+  try {await request('setup/provider/test','POST'); message('The saved provider understood the test. No task was added.');}
+  catch(error) {message(error.message,true);} finally {$('test-provider').disabled = false;}
+});
 busyForm('provider-form', async () => {
   const choice = $('provider').value;
   if (choice === 'builtin' && hosting.model.state !== 'ready') throw new Error('The built-in model is not ready. Enable it in add-on Configuration, restart, then wait for the download.');
@@ -94,7 +99,8 @@ async function refreshHosting() {
   $('model-state').textContent = model.state === 'downloading' ? 'Downloading · ' + model.percent + '%' : ({ready:'Ready',disabled:'Off',starting:'Starting',checking:'Checking weights',error:'Needs attention'}[model.state] || 'Starting');
   $('phone-info').textContent = hosting.phone_access === 'disabled' ? 'Before pairing, set phone_access and public_url in the add-on Configuration tab. Use a certificate from /ssl or your existing HTTPS reverse proxy. HA ingress is for this setup page.' : 'Your phone connects to ' + hosting.public_url + '. Make sure it is reachable with a valid HTTPS certificate before scanning.';
   $('pair').disabled = hosting.phone_access === 'disabled';
-  if (model.state === 'error') $('builtin-note').textContent = model.message;
+  const note = {ready:'Your local model is ready. Requests stay on this Home Assistant host.',downloading:'Downloading the verified local model: '+model.percent+'%. The planner remains available.',checking:'Checking your cached model. No new download is needed if the checksum matches.',starting:'Preparing the local model. This can take a moment.'};
+  $('builtin-note').textContent = model.state === 'error' ? model.message : (note[model.state] || 'Enable built_in_model in the add-on Configuration tab, then restart. The first download is about 1.1 GB. Allow at least 2.5 GB of free RAM beyond Home Assistant.');
 }
 async function start() {
   try {

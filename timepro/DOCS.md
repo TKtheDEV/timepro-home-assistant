@@ -23,7 +23,8 @@ releases are public; the application development repository is currently private
 Choose **Built-in local model** to keep interpretation inside this add-on. Enable
 `built_in_model` in Configuration, restart, wait for **Local model: Ready**, then
 choose it in the setup page and save. This option downloads Qwen2.5 1.5B Instruct
-Q4_K_M (1.12 GB) from its pinned official Hugging Face revision and verifies its
+Q4_K_M (1.12 GB), or the SSE4.2-compatible Q4_0 format (1.07 GB) on restricted VM CPUs,
+from its pinned official Hugging Face revision and verifies its
 SHA-256. No model is downloaded when the option is off; no silent cloud fallback.
 
 Allow **at least 2.5 GB of available RAM in addition to Home Assistant's needs**
@@ -35,10 +36,13 @@ host while keeping the planner and setup available. The model stays loaded while
 enabled. Disable it and restart to free its RAM. Model files are excluded from HA
 backups and can be downloaded again.
 
-The amd64 model runtime requires AVX2, FMA, F16C and BMI2 (Haswell-era or newer
-Intel/AMD features). A Proxmox VM may need CPU type `host` to expose them. A
-preflight check keeps the planner running and reports missing features instead
-of starting an incompatible model binary. The aarch64 build uses its ARM baseline.
+The amd64 runtime automatically selects the optimized runner when AVX2/FMA/F16C/BMI2
+are exposed, or the SSE4.2 runner and matching weights for restricted VM CPU
+profiles. No VM restart or CPU-profile change is needed on an SSE4.2-capable VM.
+Older CPUs get an explicit unsupported-model message while the planner keeps
+running. The aarch64 build uses its ARM baseline. Model work runs at lower CPU
+priority than HA's control processes. Start with two threads, or use four when
+your HA VM has four available CPUs.
 
 Alternatively choose a LAN Ollama endpoint using a literal private IP, e.g.
 `http://192.168.50.20:11434`, or an HTTPS OpenAI-compatible provider. TimePRO's

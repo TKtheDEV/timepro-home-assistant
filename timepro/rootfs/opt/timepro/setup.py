@@ -173,6 +173,23 @@ class Handler(BaseHTTPRequestHandler):
                 return
             code, data = api('POST', '/api/v1/pairing/qr', json.dumps({'origin': config['public_url']}).encode())
             self.reply(code, data)
+        elif self.command == 'POST' and path == '/setup/provider/test':
+            code, data = api('GET','/api/v1/state')
+            if code != 200:
+                self.reply(code,data)
+                return
+            if json.loads(data)['provider']['provider'] == 'manual':
+                self.error(409,'Save a model provider before testing it.')
+                return
+            code, data = api('POST','/api/v1/intake',json.dumps({'text':'Study physics for 25 minutes.'}).encode())
+            if code != 200:
+                self.reply(code,data)
+                return
+            proposal = json.loads(data)
+            if proposal.get('effort_minutes') != 25 or proposal.get('deadline') is not None:
+                self.error(502,'The provider answered but did not reliably parse the test. No task was saved.')
+                return
+            self.reply(200,b'{"ready":true}')
         elif self.command == 'DELETE' and re.fullmatch(r'/setup/devices/[0-9a-f-]{36}', path):
             code, data = api('DELETE', path.replace('/setup/', '/api/v1/', 1), body)
             self.reply(code, data)
