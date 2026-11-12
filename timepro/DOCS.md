@@ -108,6 +108,10 @@ same installed add-on preserves them. `/data/models` caches weights. Full HA
 backups include private planner data (excluding model weights); use encrypted
 backups and protect the HA host. Uninstalling an add-on can delete its data.
 
+HA uses a cold backup for this app: it stops the app while copying the two SQLite
+databases, then starts it again. This gives a consistent planner snapshot. Model
+files remain cached on the host and are excluded from the backup archive.
+
 This creates a new planner unless an existing backup is restored. It does not
 copy data from an unreachable Proxmox CT. Never copy live SQLite files one by
 one: stop the old server first or create consistent SQLite backups of **both**
