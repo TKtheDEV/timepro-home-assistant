@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TimePRO · Setup</title><link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body><main>
+  <header><p class="eyebrow">YOUR TIME, WITH A LITTLE HELP</p><h1>TimePRO<span> · Home Assistant</span></h1>
+    <p>Connect your assistant. Keep your day on your phone.</p></header>
+  <p id="message" role="status" aria-live="polite">Connecting to your planner…</p>
+  <section class="overview" aria-label="Server status">
+    <div><span class="label">Planner</span><strong id="planner">Starting</strong></div>
+    <div><span class="label">Local model</span><strong id="model-state">Checking</strong></div>
+    <div><span class="label">Your timezone</span><strong id="timezone">—</strong></div>
+  </section>
+
+  <section class="card"><div class="heading"><span class="step">1</span><h2>Choose the brain</h2></div>
+    <p>The model understands requests. TimePRO checks the details before changing your plan.</p>
+    <form id="provider-form">
+      <label>Provider<select id="provider"><option value="builtin">Built-in local model</option><option value="ollama">Another local Ollama server</option><option value="open_ai_compatible">OpenAI-compatible provider</option><option value="manual">Basic parser · limited understanding</option></select></label>
+      <p id="builtin-note" class="hint">Enable <code>built_in_model</code> in the add-on Configuration tab, then restart. The first download is 1.12 GB. Allow at least 2.5 GB of free RAM in addition to Home Assistant.</p>
+      <div id="provider-details"><label>Server URL<input id="endpoint" type="url" placeholder="http://192.168.50.20:11434" autocomplete="off"></label>
+        <label>Model<input id="model" placeholder="qwen2.5:1.5b" autocomplete="off"></label>
+        <label>API key <span class="hint">optional · leave blank to keep the saved key</span><input id="api-key" type="password" autocomplete="new-password"></label>
+        <label class="check"><input id="local-http" type="checkbox"> Allow HTTP to a private LAN model</label>
+      </div>
+      <button type="submit">Save provider</button>
+    </form>
+  </section>
+
+  <section class="card"><div class="heading"><span class="step">2</span><h2>Connect your calendar</h2></div>
+    <p>Use your Nextcloud account with a dedicated app password. Save once, then choose calendars.</p>
+    <form id="calendar-form"><label>Nextcloud address<input id="calendar-url" type="url" placeholder="https://cloud.example.com" required></label>
+      <label>Username<input id="calendar-user" autocomplete="username" required></label>
+      <label>App password <span class="hint">leave blank to keep the saved password</span><input id="calendar-password" type="password" autocomplete="new-password"></label>
+      <button type="submit">Save and find calendars</button>
+    </form><div id="calendars" aria-live="polite"></div>
+    <p class="hint">Import classes and appointments as fixed time; Blackboard due dates as deadlines. This preview syncs when you ask it to.</p>
+  </section>
+
+  <section class="card"><div class="heading"><span class="step">3</span><h2>Make it yours</h2></div>
+    <form id="language-form"><label>Schedule language<select id="language"><option value="en">English</option><option value="de">Deutsch</option></select></label>
+      <p class="hint">You can speak another language; saved task titles use this language.</p><button type="submit">Save language</button></form>
+    <p class="hint">Set <code>initial_timezone</code> before the first start. Updates and restarts keep the saved profile timezone.</p>
+  </section>
+
+  <section class="card"><div class="heading"><span class="step">4</span><h2>Connect your phone</h2></div>
+    <p id="phone-info">Checking HTTPS phone access…</p>
+    <button id="pair" type="button">Pair a phone</button><button id="stop-pair" class="secondary" type="button" hidden>Hide code</button>
+    <div id="pairing" hidden><img id="qr" alt="Private TimePRO pairing QR code"><p id="expires" class="hint"></p>
+      <p>TimePRO → Setup → Scan server QR. Each code lasts two minutes and works once.</p></div>
+    <details><summary>Paired phones</summary><div id="devices"></div></details>
+  </section>
+  <footer>Personal server mode · your Home Assistant host can read your data.<br>No Home Assistant token, phone integration or always-on microphone is needed for hosting.</footer>
+</main></body></html>

@@ -1,0 +1,6 @@
+#!/command/with-contenv sh
+umask 077
+export TIMEPRO_BIND=127.0.0.1:8214 TIMEPRO_DATA_DIR=/data/timepro TIMEPRO_MODE=personal
+read -r TIMEPRO_INITIAL_TIMEZONE < /run/timepro/timezone
+export TIMEPRO_INITIAL_TIMEZONE
+exec s6-setuidgid timepro /usr/local/bin/timepro-server

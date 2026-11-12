@@ -1,0 +1,3 @@
+#!/command/with-contenv sh
+umask 077
+exec s6-setuidgid timepro python3 /opt/timepro/setup.py
