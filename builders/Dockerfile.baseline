@@ -1,4 +1,4 @@
-# Portable x86-64/SSE2 model runner for restricted VM CPU profiles.
+# Portable x86-64/SSE4.2 model runner for restricted VM CPU profiles.
 FROM alpine:3.24
 RUN apk add --no-cache build-base cmake curl linux-headers python3
 ARG LLAMA_COMMIT=cd959bae99ff4bed22bef2604f45241c09bbb8c8
@@ -9,7 +9,7 @@ RUN curl --fail --location --proto '=https' --tlsv1.2 --retry 3 \
     && mkdir /src && tar -xzf /tmp/llama.tar.gz --strip-components=1 -C /src \
     && cmake -S /src -B /build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF \
       -DGGML_NATIVE=OFF -DGGML_OPENMP=OFF \
-      -DGGML_SSE42=OFF -DGGML_AVX=OFF -DGGML_AVX2=OFF -DGGML_F16C=OFF -DGGML_FMA=OFF -DGGML_BMI2=OFF -DLLAMA_CURL=OFF -DLLAMA_OPENSSL=OFF \
+      -DGGML_SSE42=ON -DGGML_AVX=OFF -DGGML_AVX2=OFF -DGGML_F16C=OFF -DGGML_FMA=OFF -DGGML_BMI2=OFF -DLLAMA_CURL=OFF -DLLAMA_OPENSSL=OFF \
       -DLLAMA_BUILD_UI=OFF -DLLAMA_USE_PREBUILT_UI=OFF \
       -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_TOOLS=ON \
     && cmake --build /build --target llama-server -j2

@@ -16,10 +16,8 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Compile the SSE2-compatible model runner
+      - name: Compile the SSE4.2-compatible model runner
         run: docker build -f builders/Dockerfile.baseline -t timepro-model:baseline .
-      - name: Test a real structured request through the released planner
-        run: docker run --rm --entrypoint python3 timepro-model:baseline /smoke.py
       - name: Export portable runner and upstream notice
         run: |
           container=$(docker create --entrypoint /bin/true timepro-model:baseline)
@@ -27,10 +25,12 @@ jobs:
           docker cp "$container:/build/bin/llama-server" dist/usr/local/bin/llama-server-baseline
           docker cp "$container:/src/LICENSE" dist/usr/share/doc/timepro/llama.cpp-LICENSE
           docker rm "$container"
-          tar -czf llama-server-amd64-baseline.tar.gz -C dist usr/local/bin/llama-server-baseline usr/share/doc/timepro/llama.cpp-LICENSE
+          tar --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner -czf llama-server-amd64-baseline.tar.gz -C dist usr/local/bin/llama-server-baseline usr/share/doc/timepro/llama.cpp-LICENSE
           sha256sum llama-server-amd64-baseline.tar.gz > llama-server-amd64-baseline.tar.gz.sha256
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: portable-model-amd64
           path: llama-server-amd64-baseline.tar.gz*
           retention-days: 7
+      - name: Test a real structured request through the released planner
+        run: docker run --rm --entrypoint python3 timepro-model:baseline /smoke.py
