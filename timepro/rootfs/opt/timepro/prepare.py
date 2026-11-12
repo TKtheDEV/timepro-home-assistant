@@ -145,13 +145,21 @@ http {{
 def main():
     os.umask(0o077)
     config = options(json.loads((DATA / 'options.json').read_text()))
-    for path in [DATA / 'timepro', DATA / 'models', RUN]:
+    for path in [DATA / 'timepro', DATA / 'models']:
         private_directory(path)
+    if RUN.is_symlink():
+        raise ValueError('Runtime directory must not be a symlink.')
+    RUN.mkdir(mode=0o750, parents=True, exist_ok=True)
+    RUN.chmod(0o750)
+    os.chown(RUN, 0, 10001)
+    private_directory(RUN / 'state')
     token_file(DATA / 'timepro/auth.token')
     (RUN / 'options.json').write_text(json.dumps(config))
-    os.chown(RUN / 'options.json', 10001, 10001)
+    os.chown(RUN / 'options.json', 0, 10001)
+    (RUN / 'options.json').chmod(0o640)
     (RUN / 'timezone').write_text(config['initial_timezone'])
-    os.chown(RUN / 'timezone', 10001, 10001)
+    os.chown(RUN / 'timezone', 0, 10001)
+    (RUN / 'timezone').chmod(0o640)
     (RUN / 'nginx.conf').write_text(nginx(config))
     print('TimePRO storage ready. Hosting mode:', config['phone_access'], flush=True)
 

@@ -9,7 +9,7 @@ import signal
 import time
 import urllib.request
 
-RUN = Path('/run/timepro')
+RUN = Path('/run/timepro/state')
 MODELS = Path('/data/models')
 NAME = 'qwen2.5-1.5b-instruct-q4_k_m.gguf'
 SIZE = 1_117_320_736
@@ -96,7 +96,7 @@ def model():
 
 def main():
     os.umask(0o077)
-    config = json.loads((RUN / 'options.json').read_text())
+    config = json.loads(Path('/run/timepro/options.json').read_text())
     if not config['built_in_model']:
         status('disabled')
         signal.pause()

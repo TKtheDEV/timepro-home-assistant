@@ -1,7 +1,7 @@
 FROM ghcr.io/home-assistant/base:3.24
 ARG BUILD_ARCH
 ARG TARGETARCH
-ARG BUILD_VERSION=0.1.0
+ARG BUILD_VERSION=0.1.1
 RUN apk add --no-cache nginx python3 libstdc++ libgcc \
     && addgroup -g 10001 timepro && adduser -D -H -u 10001 -G timepro timepro
 RUN set -eu; \

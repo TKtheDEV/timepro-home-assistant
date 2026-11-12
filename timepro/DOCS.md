@@ -62,6 +62,8 @@ Choose one:
   `https://timepro.example.com:8443`), and map **8443/tcp** under Network to a free
   host port. Restart. DNS and any firewall/port forwarding must reach that port.
   The phone must trust the certificate; verification is never bypassed.
+  Renew the files using your existing HA certificate app; TimePRO checks for
+  changes once a minute and reloads nginx only after successful validation.
 * **`phone_access: reverse_proxy`**: set `public_url` to a dedicated hostname on
   your existing TLS proxy/tunnel. Forward that hostname to this add-on's internal
   **8216/tcp** listener. For another add-on, use TimePRO's container hostname from

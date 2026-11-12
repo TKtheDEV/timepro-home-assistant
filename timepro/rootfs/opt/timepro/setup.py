@@ -52,7 +52,7 @@ def status():
     model = {'state': 'disabled'}
     if config['built_in_model']:
         try:
-            model = json.loads((RUN / 'model.json').read_text())
+            model = json.loads((RUN / 'state/model.json').read_text())
         except (OSError, ValueError):
             model = {'state': 'starting'}
         try:
